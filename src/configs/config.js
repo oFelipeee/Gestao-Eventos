@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize("fullstack_events", "root", "root", {
+const sequelize = new Sequelize("events_fullstack", "root", "root", {
     host: "localhost",
     dialect: "mysql",
 });

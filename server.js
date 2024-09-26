@@ -1,26 +1,33 @@
-const express = require("express");
-const sequelize = require("./configs/config");
+const express = require('express');
 const app = express();
+const sequelize = require('./src/config/config')
 
-require("dotenv").config();
+const routerEvento = require('./src/router/EventoRouter');
+const routerParticipantes = require('./src/router/ParticipantesRouter');
 
-sequelize
-  .authenticate()
+app.use(express.json());
 
-  .then(() => {
-    console.log("Conexão estabelecida com sucesso!");
+app.use('/evento', routerEvento);
+app.use('/participantes', routerParticipantes);
+
+app.get('/healthcheck', (req,res) => {
+    return res.status(200).json({
+        msg: 'Estamos Vivos!',
+        alive: true
+    })
+});
+
+sequelize.authenticate()
+.then(() => {
+    console.log('Conexão estabelecida com sucesso!');
     return sequelize.sync();
-  })
-  .then(() => {
-    app.listen(
-      (process.env.PORT = null ? 8080 : process.env.PORT),
-      (req, res) => {
-        console.log(
-          "O server está rodando na porta 8080."
-        );
-      }
-    );
-  })
-  .catch((error) => {
-    console.error("Erro ao se conectar com o banco: ", error);
-  });
+})
+.then(() => {
+    app.listen(process.env.PORT == null ? 3000 : process.env.PORT, (req, res) => {
+        console.log('Servidor rodando na porta: 3000. http://127.0.0.1:3000')
+    });
+})
+
+.catch((error) => {
+    console.error('Erro ao se conectar com o banco: ', error)
+})

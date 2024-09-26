@@ -1,100 +1,115 @@
-const Evento = require("../models/Evento");
+const Evento = require("../model/Evento");
+const { getAll } = require("./ParticipantesController");
 
-const EventController = {
+const EventoController = {
   create: async (req, res) => {
     try {
-      const { nomeEvento, data, local } = req.body;
-      const EventoCriado = await Evento.create({ nomeEvento, data, local });
+      const { nome, data, localizacao } = req.body;
+
+      const EventoCriado = await Evento.create({ nome, data, localizacao });
 
       return res.status(200).json({
-        msg: "Cliente criado com sucesso!",
-        evento: EventoCriado,
-      });
+        msg: "Evento criado!!", evento: EventoCriado });
+
     } catch (error) {
       console.error(error);
       return res.status(500).json({
-        msg: "Acione o suporte imediatamente!!",
+        msg: "Erro ao criar evento. Tente novamente!",
       });
     }
   },
 
   update: async (req, res) => {
+
     try {
-      const { id } = req.params;
-      const { nomeEvento, data, local } = req.body;
+        const { id } = req.params;
+        const { nome, data, localizacao } = req.body;
 
-      await Evento.update(
-        { nomeEvento: nomeEvento, data: data, local: local },
-        { where: id }
-      );
+        await Evento.update(
+            {
+                nome: nome,
+                data: data,
+                localizacao: localizacao
+            },
+            {
+                where: { id:id }
+            }
+        );
 
-      return res.status(200).json({
-        msg: "Evento atualizado com sucesso!!",
-      });
+        return res.status(200).json({
+            msg:'Evento atualizado com sucesso!'
+        })
+
     } catch (error) {
-      console.error(error);
+        console.log(error);
+        return res.status(500).json({
+            msg:'Erro ao atualizar evento! Tente novamente.'
+        })
 
-      return res.status(500).json({
-        msg: "Acione o suporte imediatamente!!",
-      });
+    }
+  },
+  getAll : async (req,res) => {
+    try {
+        const eventos = await Evento.findAll();
+    
+            return res.status(200).json({
+                msg:'Eventos encontrados',
+                eventos,
+            });
+    } catch (error)  {
+        console.error(error);
+        return res.status(500).json({
+            msg:'Erro ao buscar todos os eventos.'
+        })
     }
   },
 
-  getAll: async (req, res) => {
+  getOne : async (req, res) => {
     try {
-      const eventos = await Evento.findAll();
 
-      return res.status(200).json({
-        msg: "Eventos encontrados!",
-        eventos,
-      });
-    } catch (error) {
-      console.error(error);
+        const { id } = req.params;
 
-      return res.status(500).json({
-        msg: "Acione o Suporte imediatamente!!",
-      });
-    }
-  },
+        const evento = await Evento.findByPk(id);
 
-  getOne: async (req, res) => {
-    try {
-      const { id } = req.params;
-
-      const eventoUnico = await Evento.findByPk(id);
-
-      if (!eventoUnico) {
-        return res.status(404).json({
-          msg: "Usuário não encontrado!!",
-        });
-      }
-
-      return res.status(200).json({
-        msg: "Usuário encontrado com sucesso!!",
-        evento: eventoUnico,
-      });
-    } catch (error) {
-      console.error(error);
-
-      return res.status(500).json({
-        msg: "Acione o suporte imediamente!!",
-      });
+        if(!evento){
+            return res.status(404).json({
+                msg:'Evento não encontrado'
+            })
+        }
+        return res.status(200).json({
+            msg:'Evento encontrado com sucesso!'
+        })
+    } catch(error) {
+        console.error(error);
+        return res.status(500).json({
+            msg:'Evento não encontrado'
+        })
     }
   },
 
   delete: async (req, res) => {
     try {
-      const { id } = req.params;
+        const { id } = req.params;
+        const evento = await Evento.findByPk(id);
 
-      const evento = Evento.destroy(id);
+        if(!evento) {
+            return res.status(404).json({
+                msg:'Evento não encontrado'
+            })
+        }
+        await evento.destroy();
+        return res.status(200).json({
+            msg:'Evento deletado com sucesso'
+        })
+
     } catch (error) {
-      console.error(error);
+        console.log(error);
 
-      return res.status(500).json({
-        msg: "Acione o suporte imediatamente!!",
-      });
+        return res.status(500).json({
+            msg: 'Acione o suporte'
+        })
     }
-  },
+  }
 };
 
-module.exports = EventController;
+module.exports = EventoController;

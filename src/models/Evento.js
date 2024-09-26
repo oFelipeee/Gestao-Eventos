@@ -1,22 +1,20 @@
-const sequelize = require("../configs/config");
+const sequelize = require('../config/config');
+const { DataTypes } = require('sequelize');
 
-const { DataTypes } = require("sequelize");
+const Evento = sequelize.define('evento', {
+    nome: {
+        type: DataTypes.STRING,
+        allowNull:false,
+    },
+    data: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    localizacao: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
 
-const Evento = sequelize.define("cliente", {
-  nomeEvento: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-
-  data: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-
-  local: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
 });
 
 module.exports = Evento;
